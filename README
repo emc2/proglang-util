@@ -1,0 +1,25 @@
+proglang-util
+=============
+
+General utility code for implementing programming language frontends
+and compilers in Haskell.
+
+This is a base library for a number of other Haskell projects, all of
+which are concerned in one way or another with implementing parsers,
+type checkers, verifiers, frontends, interpreters, compilers, and
+anything else for programming languages using Haskell as the
+implementation language (or metalanguage).  That is, this code is
+designed to provide a set of tools which one might need in order to
+create a new language (or a new realization of an exiting one).
+
+This particular library aims to provide the miscellaneous tools which
+are very common in frontend and compiler work.  These include:
+
+ * Indexed symbols
+ * A position type
+ * A gensym monad
+ * A symbol table monad
+ * A common class for pretty printing
+ * A common mechanism for error reporting
+ * Utility code for implementing Alex lexers
+ * Code for computing dominance frontiers

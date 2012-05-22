@@ -1,0 +1,28 @@
+Name:                proglang-util
+Version:             0.1.0.0
+Synopsis:            Useful tools for programming language development
+Description:
+  Utility code for work relating to programming languages.  This
+  package contains a number of miscellaneous tools which are common in
+  frontends, type checkers, compilers, and interpreters.
+License:             BSD3
+Author:              Eric McCorkle
+Maintainer:          eric@shadowsun.net
+Stability:           Alpha
+Category:            Development
+Build-type:          Simple
+Cabal-version:       >=1.2
+
+Test-Suite unit-test
+  type:                 detailed-1.0
+  test-module:          UnitTest
+  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray
+
+Library
+  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray
+  exposed-modules:      Control.Monad.Context, Control.Monad.Context.Class,
+                        Control.Monad.Gensym, Control.Monad.Gensym.Class,
+                        Control.Monad.Symtab, Control.Monad.Symtab.Class,
+                        Control.Monad.Lexer, Control.Monad.Lexer.Class,
+                        Control.Monad.Symtab.Flat, Data.Symbol, Data.Pos, Text.Format,
+                        Data.Graph.Inductive.Query.DomFrontier
