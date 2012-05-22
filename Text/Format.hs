@@ -1,11 +1,53 @@
 {-# LANGUAGE TypeSynonymInstances #-}
+-- Copyright (c) 2012 Eric McCorkle.  All rights reserved.
+--
+-- Redistribution and use in source and binary forms, with or without
+-- modification, are permitted provided that the following conditions
+-- are met:
+-- 1. Redistributions of source code must retain the above copyright
+--    notice, this list of conditions and the following disclaimer.
+-- 2. Redistributions in binary form must reproduce the above copyright
+--    notice, this list of conditions and the following disclaimer in the
+--    documentation and/or other materials provided with the distribution.
+-- 3. Neither the name of the author nor the names of any contributors
+--    may be used to endorse or promote products derived from this software
+--    without specific prior written permission.
+--
+-- THIS SOFTWARE IS PROVIDED BY THE AUTHORS AND CONTRIBUTORS ``AS IS''
+-- AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+-- TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+-- PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS
+-- OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+-- LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+-- USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+-- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+-- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+-- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+-- SUCH DAMAGE.
+
+-- | This module contains a common class for pretty printable objects,
+-- and some utility code for formatting them.
+--
+-- Note, this needs to be expanded to allow for some kind of naming
+-- function to be passed in to format, in order to allow numerical
+-- identifiers to be translated into names.
 module Text.Format(
        Format(..),
        Doc,
+       -- * Concatenation
        (<>),
        (<+>),
        ($$),
        ($+$),
+       hcat,
+       hsep,
+       vcat,
+       cat,
+       sep,
+       fcat,
+       fsep,
+       -- * Constants
        empty,
        semi,
        comma,
@@ -18,26 +60,24 @@ module Text.Format(
        rbrack,
        lbrace,
        rbrace,
+       -- * Text
        text,
+       -- * Wrapping
        parens,
        brackets,
        braces,
        quotes,
        doubleQuotes,
-       hcat,
-       hsep,
-       vcat,
-       cat,
-       sep,
-       fcat,
-       fsep,
+       -- * Nesting
        nest,
        hang,
        punctuate,
+       -- * Blocks
        block,
        parenBlock,
        braceBlock,
        bracketBlock,
+       -- * Lists
        parenList,
        braceList,
        bracketList
@@ -143,13 +183,24 @@ fcat = PP.fcat . map format
 fsep :: Format f => [f] -> Doc
 fsep = PP.fsep . map format
 
-nest :: Format f => Int -> f -> Doc
+-- | Nest the argument some number of indentation layers down.
+nest :: Format f => Int
+     -- ^ Indentation
+     -> f
+     -- ^ Content
+     -> Doc
 nest n = PP.nest n . format
 
 hang :: (Format f, Format g) => f -> Int -> g -> Doc
 hang f n = PP.hang (format f) n . format
 
-punctuate :: (Format f, Format g) => f -> [g] -> [Doc]
+-- | Add content to the end of every member of a list.  Most often
+-- used with comma or semicolon.
+punctuate :: (Format f, Format g) => f
+          -- ^ Punctuation
+          -> [g]
+          -- ^ List
+          -> [Doc]
 punctuate f = PP.punctuate (format f) . map format
 
 block :: (Format f, Format g, Format h) =>

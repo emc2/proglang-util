@@ -1,5 +1,5 @@
 Name:                proglang-util
-Version:             0.1.0.0
+Version:             0.0.0.0
 Synopsis:            Useful tools for programming language development
 Description:
   Utility code for work relating to programming languages.  This
@@ -8,7 +8,7 @@ Description:
 License:             BSD3
 Author:              Eric McCorkle
 Maintainer:          eric@shadowsun.net
-Stability:           Alpha
+Stability:           Pre-alpha
 Category:            Development
 Build-type:          Simple
 Cabal-version:       >= 1.9.2
@@ -16,7 +16,8 @@ Cabal-version:       >= 1.9.2
 Test-Suite unit-test
   type:                 exitcode-stdio-1.0
   main-is:              UnitTestMain.hs
-  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray, Cabal >= 1.9.2, HUnit
+  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray,
+                        Cabal >= 1.9.2, HUnit
 
 Library
   build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray
@@ -24,5 +25,6 @@ Library
                         Control.Monad.Gensym, Control.Monad.Gensym.Class,
                         Control.Monad.Symtab, Control.Monad.Symtab.Class,
                         Control.Monad.Lexer, Control.Monad.Lexer.Class,
-                        Control.Monad.Symtab.Flat, Data.Symbol, Data.Pos, Text.Format,
-                        Data.Graph.Inductive.Query.DomFrontier
+                        Control.Monad.Symtab.Flat, Data.Symbol, Data.Pos,
+                        Data.Graph.Inductive.Query.DomFrontier, Text.AlexHelper,
+                        Text.Format
