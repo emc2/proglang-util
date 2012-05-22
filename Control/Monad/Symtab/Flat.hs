@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fglasgow-exts #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE MultiParamTypeClasses, UndecidableInstances,
+             FlexibleInstances #-}
 -- Copyright (c) 2012 Eric McCorkle.  All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
