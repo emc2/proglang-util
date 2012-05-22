@@ -35,8 +35,7 @@ module Data.Pos(
        -- * Pos type
        Pos,
        -- * Position class
-       Position,
-       pos,
+       Position(..),
        -- * Accessors
        filename,
        startline,
@@ -89,7 +88,7 @@ data Pos =
 -- | This class denotes anything which originates from a certain
 -- position in a source code file.
 class Position a where
--- | Get the position from which this object originates
+  -- | Get the position from which this object originates
   pos :: a -> Pos
 
 line :: Pos -> Int

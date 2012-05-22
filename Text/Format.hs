@@ -1,12 +1,11 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 module Text.Format(
-       Format,
+       Format(..),
        Doc,
        (<>),
        (<+>),
        ($$),
        ($+$),
-       format,
        empty,
        semi,
        comma,
@@ -50,38 +49,70 @@ import Text.PrettyPrint(Doc)
 
 import qualified Text.PrettyPrint as PP
 
+-- | An empty document
 empty = PP.empty
+
+-- | A Semicolon
 semi = PP.semi
+
+-- | A comma
 comma = PP.comma
+
+-- | A colon
 colon = PP.colon
+
+-- | An equal sign
 equals = PP.equals
+
+-- | A space
 space = PP.space
+
+-- | A left paren
 lparen = PP.lparen
+
+-- | A right paren
 rparen = PP.rparen
+
+-- | A left bracket
 lbrack = PP.lbrack
+
+-- | A right bracket
 rbrack = PP.rbrack
+
+-- | A left brace
 lbrace = PP.lbrace
+
+-- | A right brace
 rbrace = PP.rbrace
+
+-- | Format text as a document
 text = PP.text
 
+-- | Enclose the given document in parentheses
 parens :: Format f => f -> Doc
 parens = PP.parens . format
 
+-- | Enclose the given document in brackets
 brackets :: Format f => f -> Doc
 brackets = PP.brackets . format
 
+-- | Enclose the given document in braces
 braces :: Format f => f -> Doc
 braces = PP.braces . format
 
+-- | Enclose the given document in single quotes
 quotes :: Format f => f -> Doc
 quotes = PP.quotes . format
 
+-- | Enclose the given document in double quotes
 doubleQuotes :: Format f => f -> Doc
 doubleQuotes = PP.doubleQuotes . format
 
+-- | Concatenate two documents
 (<>) :: (Format f, Format g) => f -> g -> Doc
 f <> g = (format f) PP.<> (format g)
 
+-- | Concatenate two documents without space
 (<+>) :: (Format f, Format g) => f -> g -> Doc
 f <+> g = (format f) PP.<+> (format g)
 
@@ -150,7 +181,9 @@ braceList :: (Format f, Format g) => f -> [g] -> Doc
 braceList head body =
   head <> lbrack <> (nest 2 (sep (punctuate comma body))) <> rbrack
 
+-- | A class representing entities that can be formatted
 class Format f where
+  -- | Format the given entity
   format :: f -> Doc
 
 instance Format Doc where
