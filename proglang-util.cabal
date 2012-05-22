@@ -11,12 +11,12 @@ Maintainer:          eric@shadowsun.net
 Stability:           Alpha
 Category:            Development
 Build-type:          Simple
-Cabal-version:       >=1.2
+Cabal-version:       >= 1.9.2
 
 Test-Suite unit-test
-  type:                 detailed-1.0
-  test-module:          UnitTest
-  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray
+  type:                 exitcode-stdio-1.0
+  main-is:              UnitTestMain.hs
+  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray, Cabal >= 1.9.2, HUnit
 
 Library
   build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray
