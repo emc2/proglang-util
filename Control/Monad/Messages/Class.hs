@@ -26,9 +26,10 @@
 -- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 -- SUCH DAMAGE.
 
+-- | This module defines a monad for collecting messages while
+-- processing a program.
 module Control.Monad.Messages.Class(
        MonadMessages(..),
-       printMsgs
        ) where
 
 import Control.Monad.Trans
@@ -39,5 +40,12 @@ import Text.Format
 
 -- | A monad representing messages emitted by a compiler
 class (Message a, Monad m) => MonadMessages a m where
-  -- | Emit a message, but keep going
+  -- | Add a message
   msg :: a -> m ()
+  -- | Add a batch of messages
+  msgs :: [a] -> m ()
+{-
+  -- | Execute the given computation, stop if it produces any messages
+  -- worse than the given severity
+  try :: Severity -> m a -> (m Maybe a)
+-}

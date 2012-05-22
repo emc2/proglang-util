@@ -45,6 +45,7 @@ data Severity =
   | Warning
   -- | Information, not indicating a warning
   | Info
+  deriving (Ord, Eq)
 
 -- | A class representing a compiler message
 class (Ord m, Format m, Position m) => Message m where

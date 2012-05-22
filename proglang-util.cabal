@@ -21,11 +21,10 @@ Test-Suite unit-test
 
 Library
   build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray
-  exposed-modules:      Control.Monad.Context, Control.Monad.Context.Class,
-                        Control.Monad.Gensym, Control.Monad.Gensym.Class,
+  exposed-modules:      Control.Monad.Gensym, Control.Monad.Gensym.Class,
                         Control.Monad.Symtab, Control.Monad.Symtab.Class,
                         Control.Monad.Lexer, Control.Monad.Lexer.Class,
-                        Control.Monad.Messages.Class,
+                        Control.Monad.Messages.Class, Control.Monad.Messages,
                         Control.Monad.Symtab.Flat, Data.Symbol, Data.Pos, Data.Message.Class
                         Data.Graph.Inductive.Query.DomFrontier, Text.AlexHelper,
                         Text.Format

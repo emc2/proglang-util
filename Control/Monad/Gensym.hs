@@ -37,20 +37,20 @@ module Control.Monad.Gensym(
        runGensymT,
        ) where
 
-import Control.Monad.Context
+import Control.Monad.Reader
 import Control.Monad.Lexer
 import Control.Monad.State
 import Control.Monad.Trans
 import Control.Monad.Gensym.Class
 import Control.Monad.Symtab.Class
 import Data.Word
-import Prelude(Int, IO, Monad, Maybe(..), Bool(..), String, (==), (.), ($), (+), (++), show, length)
+import Prelude hiding(lookup)
 
 import qualified Data.Symbol as Symbol
 import qualified Data.HashTable as HashTable
 
 newtype GensymT m a =
-  GensymT ((StateT Word (ContextT (HashTable.HashTable String Symbol.Symbol) m)) a)
+  GensymT ((StateT Word (ReaderT (HashTable.HashTable String Symbol.Symbol) m)) a)
 type Gensym a = GensymT IO a
 
 unpackGensymT (GensymT g) = g
@@ -70,14 +70,14 @@ runGensymT :: MonadIO m => GensymT m a -> m a
 runGensymT (GensymT g) =
   do
     tab <- initGensym
-    (res, _) <- runContextT (runStateT g Symbol.firstIndex) tab
+    (res, _) <- runReaderT (runStateT g Symbol.firstIndex) tab
     return res
 
 symbol' :: MonadIO m => String ->
-           (StateT Word (ContextT (HashTable.HashTable String Symbol.Symbol) m)) Symbol.Symbol
+           (StateT Word (ReaderT (HashTable.HashTable String Symbol.Symbol) m)) Symbol.Symbol
 symbol' name =
   do
-    tab <- context
+    tab <- ask
     result <- liftIO (HashTable.lookup tab name)
     case result of
       Just sym -> return sym
@@ -90,7 +90,7 @@ symbol' name =
           return sym
 
 unique' :: MonadIO m => String ->
-           (StateT Word (ContextT (HashTable.HashTable String Symbol.Symbol) m)) Symbol.Symbol
+           (StateT Word (ReaderT (HashTable.HashTable String Symbol.Symbol) m)) Symbol.Symbol
 unique' name =
   do
     id <- get
@@ -127,12 +127,13 @@ instance MonadLexer m => MonadLexer (GensymT m) where
   setLexerState input lookahead = lift . setLexerState input lookahead
   setStartCode code = lift (setStartCode code)
 
+instance MonadReader r m => MonadReader r (GensymT m) where
+  ask = lift ask
+  local f = GensymT . mapStateT (mapReaderT (local f)) . unpackGensymT
+
 instance MonadKeyword t m => MonadKeyword t (GensymT m) where
   keyword = lift . keyword
   addKeyword str = lift . addKeyword str
-
-instance MonadContext c m => MonadContext c (GensymT m) where
-  context = lift context
 
 instance MonadSymtab a m => MonadSymtab a (GensymT m) where
   insert s = lift . (insert s)

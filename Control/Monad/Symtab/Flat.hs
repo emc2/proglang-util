@@ -42,7 +42,7 @@ module Control.Monad.Symtab.Flat(
        runFlatSymtabT
        ) where
 
-import Control.Monad.Context
+import Control.Monad.Reader
 import Control.Monad.Gensym.Class
 import Control.Monad.State
 import Control.Monad.Symtab
@@ -54,7 +54,7 @@ import Prelude(Maybe(..), IO, String, (==), (.), ($), fromInteger, toInteger)
 import qualified Data.HashTable as HashTable
 
 newtype FlatSymtabT a m b =
-  FlatSymtabT ((ContextT (HashTable.HashTable Symbol a) m) b)
+  FlatSymtabT ((ReaderT (HashTable.HashTable Symbol a) m) b)
 type FlatSymtab a b = FlatSymtabT a IO b
 
 unpackFlatSymtabT (FlatSymtabT t) = t
@@ -72,13 +72,13 @@ runFlatSymtabT :: MonadIO m => FlatSymtabT a m b -> m b
 runFlatSymtabT (FlatSymtabT fs) =
   do
     tab <- initFlatSymtab
-    runContextT fs tab
+    runReaderT fs tab
 
 instance MonadIO m => MonadSymtab a (FlatSymtabT a m) where
   insert sym d =
     FlatSymtabT $
       do
-        tab <- context
+        tab <- ask
         old <- liftIO (HashTable.lookup tab sym)
         case old of
           Just _ ->
@@ -91,13 +91,13 @@ instance MonadIO m => MonadSymtab a (FlatSymtabT a m) where
   lookup sym =
     FlatSymtabT $
       do
-        tab <- context
+        tab <- ask
         liftIO (HashTable.lookup tab sym)
 
   list =
     FlatSymtabT $
       do
-        tab <- context
+        tab <- ask
         liftIO (HashTable.toList tab)
 
 instance Monad m => Monad (FlatSymtabT a m) where
@@ -110,8 +110,9 @@ instance MonadIO m => MonadIO (FlatSymtabT a m) where
 instance MonadTrans (FlatSymtabT a) where
   lift = FlatSymtabT . lift
 
-instance MonadContext c m => MonadContext c (FlatSymtabT a m) where
-  context = lift context
+instance MonadReader c m => MonadReader c (FlatSymtabT a m) where
+  ask = lift ask
+  local f = FlatSymtabT . mapReaderT (local f) . unpackFlatSymtabT
 
 instance MonadState s m => MonadState s (FlatSymtabT a m) where
   get = lift get
