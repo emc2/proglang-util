@@ -25,6 +25,7 @@ Library
                         Control.Monad.Gensym, Control.Monad.Gensym.Class,
                         Control.Monad.Symtab, Control.Monad.Symtab.Class,
                         Control.Monad.Lexer, Control.Monad.Lexer.Class,
-                        Control.Monad.Symtab.Flat, Data.Symbol, Data.Pos,
+                        Control.Monad.Messages.Class,
+                        Control.Monad.Symtab.Flat, Data.Symbol, Data.Pos, Data.Message.Class
                         Data.Graph.Inductive.Query.DomFrontier, Text.AlexHelper,
                         Text.Format

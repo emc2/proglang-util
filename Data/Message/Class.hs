@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances, UndecidableInstances #-}
 -- Copyright (c) 2012 Eric McCorkle.  All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -26,18 +26,36 @@
 -- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 -- SUCH DAMAGE.
 
-module Control.Monad.Messages.Class(
-       MonadMessages(..),
-       printMsgs
+-- | This module defines a class for compiler error messages.
+module Data.Message.Class(
+       Message(..),
+       Severity(..)       
        ) where
 
-import Control.Monad.Trans
-import Data.List
 import Data.Pos
-import Data.Message.Class
 import Text.Format
 
--- | A monad representing messages emitted by a compiler
-class (Message a, Monad m) => MonadMessages a m where
-  -- | Emit a message, but keep going
-  msg :: a -> m ()
+-- | A type indicating the severity of a reported error
+data Severity =
+  -- | Indicates a bug in the compiler itself
+    Internal
+  -- | An error (ie syntax error, type error)
+  | Error
+  -- | A warning
+  | Warning
+  -- | Information, not indicating a warning
+  | Info
+
+-- | A class representing a compiler message
+class (Ord m, Format m, Position m) => Message m where
+  -- | Get the message's severity
+  severity :: m -> Severity
+  -- | Format the message's payload, do not include position or
+  -- severity.
+  describe :: m -> Doc
+
+instance Format Severity where
+  format Internal = text "internal error"
+  format Error = text "error"
+  format Warning = text "warning"
+  format Info = text "info"
