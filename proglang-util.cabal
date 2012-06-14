@@ -16,11 +16,11 @@ Cabal-version:       >= 1.9.2
 Test-Suite unit-test
   type:                 exitcode-stdio-1.0
   main-is:              UnitTestMain.hs
-  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray,
+  build-depends:        base, mtl, data-hash, pretty, fgl, array, bitarray,
                         Cabal >= 1.9.2, HUnit
 
 Library
-  build-depends:        base, haskell98, mtl, data-hash, pretty, fgl, array, bitarray
+  build-depends:        base, mtl, data-hash, pretty, fgl, array, bitarray
   exposed-modules:      Control.Monad.Gensym, Control.Monad.Gensym.Class,
                         Control.Monad.Symtab, Control.Monad.Symtab.Class,
                         Control.Monad.Lexer, Control.Monad.Lexer.Class,

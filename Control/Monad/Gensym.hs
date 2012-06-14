@@ -44,7 +44,7 @@ import Control.Monad.Trans
 import Control.Monad.Gensym.Class
 import Control.Monad.Symtab.Class
 import Data.Word
-import Prelude hiding(lookup)
+import Prelude hiding (lookup)
 
 import qualified Data.Symbol as Symbol
 import qualified Data.HashTable as HashTable

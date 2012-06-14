@@ -33,14 +33,18 @@ module Control.Monad.Messages.Basic(
 import Data.Pos
 
 -- | This is a monad containing functions pertaining to things that
--- just about every compiler does.  For example, every compiler
--- eventually has a functions that outputs "parse error".
+-- just about every compiler does.  For example, virtually every
+-- compiler has a function that outputs "parse error".
 class Monad m => BasicMessages m where
   -- | Unrecognized input
   lexerError :: Pos -> String -> m ()
   -- | Unterminated comment
   untermComment :: Pos -> m ()
+  -- | Unterminated string
+  untermString :: Pos -> m ()
   -- | Parse Errors
   parseError :: Pos -> String -> m ()
   -- | Can't find a file
   fileNotFound :: Pos -> String -> m ()
+  -- | No newline at end of file
+  noNewlineEOF :: m ()
