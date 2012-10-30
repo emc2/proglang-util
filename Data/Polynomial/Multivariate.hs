@@ -35,7 +35,7 @@
 -- the present, this uses the (likely inefficient) implementation of
 -- rings in NumericPrelude.
 module Data.Polynomial.Multivariate(
-       Polynomial,
+       Polynomial
        ) where
 
 import Data.Array(Array)
