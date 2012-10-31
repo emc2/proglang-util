@@ -38,11 +38,15 @@ module Data.Polynomial.Multivariate(
        Polynomial
        ) where
 
+import Control.Applicative
 import Data.Array(Array)
+import Data.Foldable
 import Data.Map(Map)
-import Data.List
+import Data.List(intercalate)
+import Data.Traversable
 import Data.Word
-import NumericPrelude
+import NumericPrelude hiding (concat, mapM, sequence,
+                              foldr, foldl, foldr1, foldl1)
 
 import qualified Data.Array as Array
 import qualified Data.Map as Map
@@ -75,10 +79,10 @@ instance Eq e => Eq (Monomial e) where
 -- | Multivariate polynomials.  Uses a map to only store one copy of
 -- the term in question, and uses indexes to refer to it throughout
 -- the actual algebraic structure.
-data Polynomial c e t= P (Array Word t) (Algebra.T (Monomial e) c)
+data Polynomial c e t = P (Algebra.T (Monomial e) c) (Array Word t)
 
 instance (Show t, Show c, Show e) => Show (Polynomial t c e) where
-  show (P terms alg) =
+  show (P alg terms) =
     show alg ++ " where " ++
       intercalate ", " (map (\(k, t) -> "x_" ++ show k ++ " = " ++ show t)
                             (Array.assocs terms))
@@ -89,7 +93,7 @@ combine :: (Ord t, Ord e) =>
            (Algebra.T (Monomial e) c -> Algebra.T (Monomial e) c ->
             Algebra.T (Monomial e) c) ->
            Polynomial c e t -> Polynomial c e t -> Polynomial c e t
-combine op (P t1 (Algebra.Cons map1)) (P t2 (Algebra.Cons map2)) =
+combine op (P (Algebra.Cons map1) t1) (P (Algebra.Cons map2) t2) =
   let
     mapMonoVars :: (Word -> Word) -> Monomial e -> Monomial e
     mapMonoVars f (M m) = M (Map.mapKeys f m)
@@ -124,27 +128,46 @@ combine op (P t1 (Algebra.Cons map1)) (P t2 (Algebra.Cons map2)) =
     p1 = Algebra.Cons (Map.mapKeys (mapMonoVars (rename1 Array.!)) map1)
     p2 = Algebra.Cons (Map.mapKeys (mapMonoVars (rename2 Array.!)) map2)
   in
-    P mergedarr (op p1 p2)
+    P (op p1 p2) mergedarr
 
 instance (Ord c, Ord e, Ord t, Additive.C c, Additive.C e) =>
          Additive.C (Polynomial c e t) where
-  zero = P (Array.listArray (1, 0) []) zero
-  negate (P t p) = P t (negate p)
+  zero = P zero (Array.listArray (1, 0) [])
+  negate (P alg terms) = P (negate alg) terms
   (+) = combine (+)
   (-) = combine (-)
 
 instance (Ord c, Ord e, Ord t, Ring.C c, Additive.C e) =>
          Ring.C (Polynomial c e t) where
-  one = P (Array.listArray (1, 0) []) one
-  fromInteger = P (Array.listArray (1, 0) []) . fromInteger
-  (P t p) ^ e = P t (p ^ e)
+  one = P one (Array.listArray (1, 0) [])
+  fromInteger n = P (fromInteger n) (Array.listArray (1, 0) [])
+  (P alg terms) ^ e = P (alg ^ e) terms
   (*) = combine (*)
 
 instance Functor (Polynomial c e) where
-  fmap f (P t p) = P (fmap f t) p
+  fmap f (P alg terms) = P alg (fmap f terms)
+
+instance Foldable (Polynomial c e) where
+  fold (P _ terms) = fold terms
+  foldMap f (P _ terms) = foldMap f terms
+  foldr f i (P _ terms) = foldr f i terms
+  foldl f i (P _ terms) = foldl f i terms
+  foldr1 f (P _ terms) = foldr1 f terms
+  foldl1 f (P _ terms) = foldl1 f terms
+
+instance Traversable (Polynomial c e) where
+  traverse f (P alg terms) = P alg <$> traverse f terms
+  sequenceA (P alg terms) = P alg <$> sequenceA terms
+  mapM f (P alg terms) = mapM f terms >>= return . P alg
+  sequence (P alg terms) = sequence terms >>= return . P alg
 {-
 instance Applicative (Polynomial c e) where
   pure x = P (Array.listArray (0, 0) [x])
              (Algebra.monomial (Map.singleton 1 one) one)
 
 -}
+
+instance Monad (Polynomial c e) where
+  return x = P (Algebra.monomial (Map.singleton 1 one) one)
+               (Array.listArray (0, 0) [x])
+  (P alg terms) >>= f = mapM f terms >>= return . P alg
