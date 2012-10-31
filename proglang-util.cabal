@@ -14,8 +14,8 @@ Build-type:          Simple
 Cabal-version:       >= 1.9.2
 
 Test-Suite unit-test
-  type:                 exitcode-stdio-1.0
-  main-is:              UnitTestMain.hs
+  type:                 detailed-0.9
+  test-module:          UnitTest
   build-depends:        base, mtl, data-hash, pretty, fgl, array, bitarray,
                         Cabal >= 1.9.2, HUnit
 
