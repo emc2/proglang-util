@@ -139,3 +139,12 @@ instance (Ord c, Ord e, Ord t, Ring.C c, Additive.C e) =>
   fromInteger = P (Array.listArray (1, 0) []) . fromInteger
   (P t p) ^ e = P t (p ^ e)
   (*) = combine (*)
+
+instance Functor (Polynomial c e) where
+  fmap f (P t p) = P (fmap f t) p
+{-
+instance Applicative (Polynomial c e) where
+  pure x = P (Array.listArray (0, 0) [x])
+             (Algebra.monomial (Map.singleton 1 one) one)
+
+-}

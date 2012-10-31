@@ -23,3 +23,4 @@ are very common in frontend and compiler work.  These include:
  * A common mechanism for error reporting
  * Utility code for implementing Alex lexers
  * Code for computing dominance frontiers
+ * Code for handling multivariate polynomials
