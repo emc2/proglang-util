@@ -104,17 +104,25 @@ combine op (P (Algebra.Cons map1) t1) (P (Algebra.Cons map2) t2) =
              (Array Word a, Array Word Word, Array Word Word)
     merge a1 a2 =
       let
+        -- Helper function
         merge' :: Ord a => ([a], [Word], [Word], Word) -> [a] -> [a] ->
                            (Array Word a, Array Word Word, Array Word Word)
+        -- Dual induction case, we compare the first elements of the lists.
         merge' (merged, amap, bmap, ind) (a : as) (b : bs) =
+          -- Pick the lesser of the two and append it to the merged
+          -- list.  Also, build two renaming lists, which map indexes
+          -- in each of the original lists to indexes in the new list.
           case compare a b of
             LT -> merge' (a : merged, ind : amap, bmap, ind + 1) as (b : bs)
             GT -> merge' (b : merged, amap, ind : bmap, ind + 1) (a : as) bs
             EQ -> merge' (a : merged, ind : amap, ind : bmap, ind + 1) as bs
+        -- Single induction cases, if we run out of one list, append
+        -- the other, building the renaming maps accordingly.
         merge' (merged, amap, bmap, ind) (a : as) [] =
           merge' (a : merged, ind : amap, bmap, ind + 1) as []
         merge' (merged, amap, bmap, ind) [] (b : bs)=
           merge' (b : merged, amap, ind : bmap, ind + 1) [] bs
+        -- When both are empty, build the arrays.
         merge' (merged, amap, bmap, ind) [] [] =
           (Array.listArray (0, ind) (reverse merged),
            Array.listArray (0, (fromIntegral (length amap)) - 1) (reverse amap),
