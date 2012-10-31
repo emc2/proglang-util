@@ -165,9 +165,8 @@ instance Applicative (Polynomial c e) where
   pure x = P (Array.listArray (0, 0) [x])
              (Algebra.monomial (Map.singleton 1 one) one)
 
--}
-
 instance Monad (Polynomial c e) where
   return x = P (Algebra.monomial (Map.singleton 1 one) one)
                (Array.listArray (0, 0) [x])
   (P alg terms) >>= f = mapM f terms >>= return . P alg
+-}
