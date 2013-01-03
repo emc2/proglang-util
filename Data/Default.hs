@@ -27,7 +27,7 @@
 -- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
 -- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 -- SUCH DAMAGE.
-{-# OPTIONS_GHC -funbox-strict-fields #-}
+{-# OPTIONS_GHC -funbox-strict-fields -Wall -Werror #-}
 
 -- | This module defines a class for data types with a default values.
 -- This comes in handy when implementing instances for language
