@@ -21,7 +21,7 @@ Test-Suite unit-test
 
 Library
   build-depends:        base, mtl, data-hash, pretty, fgl, array, bitarray,
-                        numeric-prelude, containers, bound
+                        numeric-prelude, containers, bound, prelude-extras
   exposed-modules:      Control.Monad.Gensym, Control.Monad.Gensym.Class,
                         Control.Monad.Symtab, Control.Monad.Symtab.Class,
                         Control.Monad.Lexer, Control.Monad.Lexer.Class,
@@ -29,5 +29,6 @@ Library
                         Control.Monad.Messages.Basic,
                         Control.Monad.Symtab.Flat, Data.Default, Data.Symbol,
                         Data.Hash.ExtraInstances, Data.Pos, Data.Message.Class,
-                        Data.Graph.Inductive.Query.DomFrontier, Text.AlexHelper,
-                        Text.Format
+                        Data.Graph.Inductive.Query.DomFrontier,
+                        Prelude.Extras.ExtraInstances,
+                        Text.AlexHelper, Text.Format
