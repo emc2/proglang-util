@@ -95,3 +95,6 @@ instance Ord Symbol where
 
 instance Eq Symbol where
   (Symbol n1 _) == (Symbol n2 _) = n1 == n2
+
+instance Default Symbol where
+  defaultVal = unused
