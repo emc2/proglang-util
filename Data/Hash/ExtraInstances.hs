@@ -28,9 +28,9 @@
 -- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 -- SUCH DAMAGE.
 {-# LANGUAGE FlexibleInstances, FlexibleContexts, UndecidableInstances #-}
+
 -- | This module contains extra instances of Hashable, which are not
 -- found in the data-hash library, but are useful.
-
 module Data.Hash.ExtraInstances where
 
 import Bound
