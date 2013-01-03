@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -funbox-strict-fields #-}
 -- Copyright (c) 2012 Eric McCorkle.  All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -25,6 +24,7 @@
 -- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
 -- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 -- SUCH DAMAGE.
+{-# OPTIONS_GHC -funbox-strict-fields -Wall -Werror #-}
 
 -- | This module provides an implementation of a very common technique
 -- in compiler implementation.  Names are assigned to a unique number
@@ -42,6 +42,7 @@ module Data.Symbol(
        number
        ) where
 
+import Data.Default
 import Data.Hash
 import Data.Word
 import Text.Format
