@@ -36,16 +36,27 @@ module Data.Interval(
        Interval(..),
        Intervals,
 
-       -- * Utility functions
-       fromIntervals
-       toIntervals,
-       normalizeInterval,
+       -- * Constructors
+       allNumbers,
+       fromIntervalList,
+
+       -- * Deconstructors
+       toIntervalList,
+
+       -- * Utility Functions
        size,
        span,
        distinctValues,
+
+       -- * Pack/Unpack Offsets
        packOffsets,
        unpackOffsets
        ) where
+
+import Control.Monad
+import Data.Hash
+import Data.List hiding (span)
+import Prelude hiding (span)
 
 -- | A datatype representing a single interval
 data Interval n =
@@ -72,33 +83,14 @@ lower :: Interval n -> n
 lower (Single n) = n
 lower (Interval n _) = n
 lower (Min n) = n
-lower (Max n) = error "Lower bound of a Max interval is undefined"
+lower (Max _) = error "Lower bound of a Max interval is undefined"
 
 -- | Upper bound of a interval
 upper :: Interval n -> n
 upper (Single n) = n
 upper (Interval _ n) = n
 upper (Max n) = n
-upper (Min n) = error "Upper bound of a Min interval is undefined"
-
-instance Show n => Show (Interval n) where
-  show (Min n) = show n ++ " to +inf"
-  show (Single n) = show n
-  show (Interval n1 n2) = show n1 ++ " to " ++ show n2
-  show (Max n) = "-inf to " ++ show n
-
-instance Hashable n => Hashable (Interval n) where
-  hash (Interval n1 n2) = hashInt 1 `combine` hash n1 `combine` hash n2
-  hash (Single n) = hashInt 2 `combine` hash n
-  hash (Min n) = hashInt 3 `combine` hash n
-  hash (Max n) = hashInt 4 `combine` hash n
-
-instance Show n => Show (Intervals n) where
-  show (Intervals { intervals = [] }) = "-inf to +inf"
-  show (Intervals { intervals = intervals }) = show intervals
-
-instance Hashable n => Hashable (Intervals n) where
-  show (Intervals { intervals = intervals }) = show intervals
+upper (Min _) = error "Upper bound of a Min interval is undefined"
 
 -- | The Intervals object representing all numbers.
 allNumbers :: Intervals n
@@ -106,12 +98,12 @@ allNumbers = Intervals { intervals = [] }
 
 -- | Construct an Intervals object from a list of Interval objects.
 -- The list may contain intervals that overlap, or are out of order.
-fromIntervalList :: [Interval n] -> Intervals n
-fromIntervalList l = Intervals { intervals = normalizeIntervals l }
+fromIntervalList :: Integral n => [Interval n] -> Intervals n
+fromIntervalList l = Intervals { intervals = normalizeInterval l }
 
 -- | Convert an Intervals object to a sorted, normalized list of
 -- Interval objects
-toIntervalList :: Intervals n -> [Intervals n]
+toIntervalList :: Intervals n -> [Interval n]
 toIntervalList (Intervals { intervals = l }) = l
 
 normalizeInterval :: Integral n => [Interval n] -> [Interval n]
@@ -127,8 +119,8 @@ normalizeInterval =
     -- reverse the order function to effectively reverse the lists
     orderInterval :: Ord n => Interval n -> Interval n -> Ordering
     orderInterval (Max n1) (Max n2) = compare n2 n1
-    orderInterval (Max n) _ = GT
-    orderInterval _ (Max n) = LT
+    orderInterval (Max _) _ = GT
+    orderInterval _ (Max _) = LT
     orderInterval r1 r2 = compare (lower r2) (lower r1)
 
     -- The actual normalization function, remember that the list is
@@ -136,8 +128,8 @@ normalizeInterval =
     intervalNorm :: Integral n => [Interval n] -> [Interval n] -> [Interval n]
     -- If a min and max are adjacent, then there is either a
     -- "forbidden region", or else the integer is totally unbounded
-    intervalNorm accum (Min min : Max max : _)
-            | min > max + 1 = [Max max, Min min]
+    intervalNorm _ (Min minn : Max maxn : _)
+            | minn > maxn + 1 = [Max maxn, Min minn]
             | otherwise = []
     -- This rule is necessary to avoid taking the upper bound of Min,
     -- which is undefined
@@ -149,14 +141,14 @@ normalizeInterval =
             | otherwise = intervalNorm ([Min n]) (r : list)
     -- This rule is necessary to avoid taking the lower bound of Min,
     -- which is undefined
-    intervalNorm accum (r : Max n : list) =
+    intervalNorm accum (r : Max n : _) =
       intervalNorm (Max n : collapse r : accum) []
     -- Put the first Max on the end of the result list, then ignore
     -- everything that follows
-    intervalNorm accum (Max n : list) = intervalNorm (Max n : accum) []
+    intervalNorm accum (Max n : _) = intervalNorm (Max n : accum) []
     -- Similar to the input list, max-min pairs generate an instant result
-    intervalNorm (Max max : Min min : _) []
-            | min > max + 1 = [Max max, Min min]
+    intervalNorm (Max maxn : Min minn : _) []
+            | minn > maxn + 1 = [Max maxn, Min minn]
             | otherwise = []
     -- Absorb a interval into the Max if it overlaps, otherwise stop
     intervalNorm result @ (Max n : r : accum) []
@@ -177,25 +169,25 @@ normalizeInterval =
     intervalNorm [] . sortBy orderInterval
 
 -- | Get the size of a single interval.
-size :: Integral n => Interval n -> Maybe Integer
+size :: Integral n => Interval n -> Maybe n
 size (Interval lo hi) = Just (hi - lo + 1)
 size (Single _) = Just 1
 size _ = Nothing
 
 -- | Get the number of distinct values that this Intervals object
 -- represents.
-distinctValues :: Integral n => Intervals n -> Maybe Integer
+distinctValues :: Integral n => Intervals n -> Maybe n
 distinctValues = foldr (liftM2 (+)) (Just 0) . map size . toIntervalList
 
 -- | Get the difference between the lowest and highest possible values
 -- of an Intervals object.
 span :: Intervals n -> Maybe (n, n)
 span (Intervals { intervals = [] }) = Nothing
-span (Intervals { intervals = intervals }) =
- case (head intervals, last intervals) of
+span (Intervals { intervals = is }) =
+ case (head is, last is) of
       (Max _, _) -> Nothing
       (_, Min _) -> Nothing
-      (first, last) -> Just (lower first, upper last)
+      (firsti, lasti) -> Just (lower firsti, upper lasti)
 
 -- | A possible list of (a, b) pairs, so that if x < a then x + b else
 -- ...  will condense the integer into a single interval of values.  This
@@ -224,3 +216,22 @@ unpackOffsets =
     genOffset (avail, _) _ = (avail, Nothing)
   in
     (liftM reverse) . snd . foldl genOffset (0, Just []) . toIntervalList
+
+instance Show n => Show (Interval n) where
+  show (Min n) = show n ++ " to +inf"
+  show (Single n) = show n
+  show (Interval n1 n2) = show n1 ++ " to " ++ show n2
+  show (Max n) = "-inf to " ++ show n
+
+instance Show n => Show (Intervals n) where
+  show (Intervals { intervals = [] }) = "-inf to +inf"
+  show (Intervals { intervals = is }) = show is
+
+instance Hashable n => Hashable (Interval n) where
+  hash (Interval n1 n2) = hashInt 1 `combine` hash n1 `combine` hash n2
+  hash (Single n) = hashInt 2 `combine` hash n
+  hash (Min n) = hashInt 3 `combine` hash n
+  hash (Max n) = hashInt 4 `combine` hash n
+
+instance Hashable n => Hashable (Intervals n) where
+  hash (Intervals { intervals = is }) = hash is
