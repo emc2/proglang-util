@@ -1,5 +1,5 @@
 Name:                proglang-util
-Version:             0.2.0.1
+Version:             0.2.1.1
 Synopsis:            Useful tools for programming language development
 Description:
   Utility code for work relating to programming languages.  This
@@ -22,13 +22,23 @@ Test-Suite unit-test
 Library
   build-depends:        base, mtl, data-hash, pretty, fgl, array, bitarray,
                         numeric-prelude, containers, bound, prelude-extras
-  exposed-modules:      Control.Monad.Gensym, Control.Monad.Gensym.Class,
-                        Control.Monad.Symtab, Control.Monad.Symtab.Class,
-                        Control.Monad.Lexer, Control.Monad.Lexer.Class,
-                        Control.Monad.Messages.Class, Control.Monad.Messages,
+  exposed-modules:      Control.Monad.Gensym,
+                        Control.Monad.Gensym.Class,
+                        Control.Monad.Symtab,
+                        Control.Monad.Symtab.Class,
+                        Control.Monad.Lexer,
+                        Control.Monad.Lexer.Class,
+                        Control.Monad.Messages.Class,
+                        Control.Monad.Messages,
                         Control.Monad.Messages.Basic,
-                        Control.Monad.Symtab.Flat, Data.Default, Data.Symbol,
-                        Data.Hash.ExtraInstances, Data.Pos, Data.Message.Class,
+                        Control.Monad.Symtab.Flat,
+                        Data.Default,
                         Data.Graph.Inductive.Query.DomFrontier,
+                        Data.Hash.ExtraInstances,
+                        Data.Interval,
+                        Data.Message.Class,
+                        Data.Pos,
+                        Data.Symbol,
                         Prelude.Extras.ExtraInstances,
-                        Text.AlexHelper, Text.Format
+                        Text.AlexHelper,
+                        Text.Format
