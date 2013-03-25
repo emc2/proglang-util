@@ -1,5 +1,5 @@
 Name:                proglang-util
-Version:             0.2.1.1
+Version:             0.2.2.0
 Synopsis:            Useful tools for programming language development
 Description:
   Utility code for work relating to programming languages.  This
@@ -16,12 +16,12 @@ Cabal-version:       >= 1.9.2
 Test-Suite unit-test
   type:                 detailed-0.9
   test-module:          UnitTest
-  build-depends:        base, mtl, data-hash, pretty, fgl, array, bitarray,
-                        Cabal >= 1.9.2, HUnit
+  build-depends:        base, mtl, pretty, fgl, array, bitarray,
+                        Cabal >= 1.9.2, HUnit, hashable
 
 Library
-  build-depends:        base, mtl, data-hash, pretty, fgl, array, bitarray,
-                        numeric-prelude, containers, bound, prelude-extras
+  build-depends:        base, mtl, pretty, fgl, array, bitarray, numeric-prelude,
+                        containers, bound, prelude-extras, hashable, QuickCheck
   exposed-modules:      Control.Monad.Gensym,
                         Control.Monad.Gensym.Class,
                         Control.Monad.Symtab,

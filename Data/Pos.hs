@@ -66,7 +66,7 @@ module Data.Pos(
        ) where
 
 import Data.Foldable
-import Data.Hash
+import Data.Hashable
 import Text.Format
 
 -- | This type represents a position in a source code file
@@ -203,13 +203,12 @@ instance Position p => Position [p] where
   pos l = merge (pos (head l)) (pos (last l))
 
 instance Hashable Pos where
-  hash (Pos { startline = startline, startcol = startcol, startoff = startoff,
-              endline = endline, endcol = endcol, endoff = endoff,
-              filename = filename }) =
-    hashInt startline `combine` hashInt startcol `combine`
-    hashInt startoff `combine` hashInt endline `combine`
-    hashInt endcol `combine` hashInt endoff `combine`
-    hashFoldable filename
+  hashWithSalt s Pos { startline = startline, startcol = startcol,
+                       startoff = startoff, endline = endline, endcol = endcol,
+                       endoff = endoff, filename = filename } =
+    s `hashWithSalt` startline `hashWithSalt` startcol `hashWithSalt`
+    startoff `hashWithSalt` endline `hashWithSalt` endcol `hashWithSalt`
+    endoff `hashWithSalt` filename
 
 instance Ord Pos where
   compare p1 p2 =

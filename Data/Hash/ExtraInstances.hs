@@ -34,18 +34,10 @@
 module Data.Hash.ExtraInstances where
 
 import Bound
-import Data.Hash
+import Data.Hashable
 import Data.Map(Map)
 
 import qualified Data.Map as Map
 
-instance (Hashable b, Hashable a) => Hashable (Var b a) where
-  hash (B b) = hash b
-  hash (F a) = hash a
-
-instance (Hashable b, Hashable (f (Var b a)), Hashable a, Monad f) =>
-         Hashable (Scope b f a) where
-  hash s = hash (fromScope s)
-
 instance (Hashable k, Hashable v) => Hashable (Map k v) where
-  hash = hash . Map.toAscList
+  hashWithSalt s m = Map.foldWithKey (\k' v' s' -> hashWithSalt s' (k', v')) s m

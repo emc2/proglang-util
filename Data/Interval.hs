@@ -54,7 +54,7 @@ module Data.Interval(
        ) where
 
 import Control.Monad
-import Data.Hash
+import Data.Hashable
 import Data.List hiding (span)
 import Prelude hiding (span)
 
@@ -228,10 +228,11 @@ instance Show n => Show (Intervals n) where
   show (Intervals { intervals = is }) = show is
 
 instance Hashable n => Hashable (Interval n) where
-  hash (Interval n1 n2) = hashInt 1 `combine` hash n1 `combine` hash n2
-  hash (Single n) = hashInt 2 `combine` hash n
-  hash (Min n) = hashInt 3 `combine` hash n
-  hash (Max n) = hashInt 4 `combine` hash n
+  hashWithSalt s (Interval n1 n2) =
+    s `hashWithSalt` (1 :: Int) `hashWithSalt` n1 `hashWithSalt` n2
+  hashWithSalt s (Single n) = s `hashWithSalt` (2 :: Int) `hashWithSalt` n
+  hashWithSalt s (Min n) = s `hashWithSalt` (3 :: Int) `hashWithSalt` n
+  hashWithSalt s (Max n) = s `hashWithSalt` (4 :: Int) `hashWithSalt` n
 
 instance Hashable n => Hashable (Intervals n) where
-  hash (Intervals { intervals = is }) = hash is
+  hashWithSalt s Intervals { intervals = is } = hashWithSalt s is
