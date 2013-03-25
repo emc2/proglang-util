@@ -17,11 +17,12 @@ Test-Suite unit-test
   type:                 detailed-0.9
   test-module:          UnitTest
   build-depends:        base, mtl, pretty, fgl, array, bitarray,
-                        Cabal >= 1.9.2, HUnit, hashable
+                        Cabal >= 1.9.2, HUnit, hashable, hashable-extras
 
 Library
   build-depends:        base, mtl, pretty, fgl, array, bitarray, numeric-prelude,
-                        containers, bound, prelude-extras, hashable, QuickCheck
+                        containers, bound, prelude-extras, hashable, QuickCheck,
+                        hashable-extras
   exposed-modules:      Control.Monad.Gensym,
                         Control.Monad.Gensym.Class,
                         Control.Monad.Symtab,

@@ -35,9 +35,17 @@ module Data.Hash.ExtraInstances where
 
 import Bound
 import Data.Hashable
+import Data.Hashable.Extras
 import Data.Map(Map)
 
 import qualified Data.Map as Map
 
+instance Hashable2 Map where
+  hashWithSalt2 =
+    Map.foldWithKey (\k' v' s' -> s' `hashWithSalt` k' `hashWithSalt` v')
+
+instance Hashable k => Hashable1 (Map k) where
+  hashWithSalt1 = hashWithSalt2
+
 instance (Hashable k, Hashable v) => Hashable (Map k v) where
-  hashWithSalt s m = Map.foldWithKey (\k' v' s' -> hashWithSalt s' (k', v')) s m
+  hashWithSalt = hashWithSalt2
