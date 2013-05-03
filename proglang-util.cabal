@@ -1,5 +1,5 @@
 Name:                proglang-util
-Version:             0.2.2.0
+Version:             0.2.2.1
 Synopsis:            Useful tools for programming language development
 Description:
   Utility code for work relating to programming languages.  This
@@ -23,7 +23,10 @@ Library
   build-depends:        base, mtl, pretty, fgl, array, bitarray, numeric-prelude,
                         containers, bound, prelude-extras, hashable, QuickCheck,
                         hashable-extras
-  exposed-modules:      Control.Monad.Gensym,
+  exposed-modules:      Bound.ExtraInstances,
+                        Bound.Scope.ExtraInstances,
+                        Bound.Var.ExtraInstances,
+                        Control.Monad.Gensym,
                         Control.Monad.Gensym.Class,
                         Control.Monad.Symtab,
                         Control.Monad.Symtab.Class,
