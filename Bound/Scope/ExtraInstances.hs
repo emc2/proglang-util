@@ -36,6 +36,8 @@ import Bound.Var
 import Bound.Var.ExtraInstances
 import Text.Format
 
-instance (Format b, Format s, Monad t, Format (t (Var b s))) =>
-         Format (Scope b t s) where
+instance (Monad t, Format (t (Var b s))) => Format (Scope b t s) where
   format s = format (fromScope s)
+
+instance (Monad t, FormatList (t (Var b s))) => FormatList (Scope b t s) where
+  formatList s = formatList (fromScope s)

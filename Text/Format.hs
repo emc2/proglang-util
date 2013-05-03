@@ -34,6 +34,7 @@
 -- identifiers to be translated into names.
 module Text.Format(
        Format(..),
+       FormatList(..),
        Doc,
        -- * Concatenation
        (<>),
@@ -290,3 +291,11 @@ instance Format Double where
 
 instance Format Rational where
   format r = PP.rational r
+
+-- | A class representing entities that can be formatted as a list of
+-- documents.  Good for bindings, scopes, etc.
+class FormatList f where
+  formatList :: f -> [Doc]
+
+instance Format f => FormatList [f] where
+  formatList f = map format f
