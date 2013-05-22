@@ -79,6 +79,9 @@ module Text.Format(
        braceBlock,
        bracketBlock,
        -- * Lists
+       headlessParenList,
+       headlessBraceList,
+       headlessBracketList,
        parenList,
        braceList,
        bracketList
@@ -221,17 +224,29 @@ braceBlock :: (Format f, Format g) => f -> [g] -> Doc
 braceBlock head body =
   block 2 (head <+> lbrace) (sep body) rbrace
 
+headlessParenList :: Format f => [f] -> Doc
+headlessParenList body =
+  lparen <> (nest 2 (sep (punctuate comma body))) <> rparen
+
+headlessBracketList :: Format f => [f] -> Doc
+headlessBracketList body =
+  lbrack <> (nest 2 (sep (punctuate comma body))) <> rbrack
+
+headlessBraceList :: Format f => [f] -> Doc
+headlessBraceList body =
+  lbrace <> (nest 2 (sep (punctuate comma body))) <> rbrace
+
 parenList :: (Format f, Format g) => f -> [g] -> Doc
 parenList head body =
-  head <> lparen <> (nest 2 (sep (punctuate comma body))) <> rparen
+  head <> headlessParenList body
 
 bracketList :: (Format f, Format g) => f -> [g] -> Doc
 bracketList head body =
-  head <> lbrack <> (nest 2 (sep (punctuate comma body))) <> rbrack
+  head <> headlessBracketList body
 
 braceList :: (Format f, Format g) => f -> [g] -> Doc
 braceList head body =
-  head <> lbrack <> (nest 2 (sep (punctuate comma body))) <> rbrack
+  head <> headlessBracketList body
 
 -- | A class representing entities that can be formatted
 class Format f where
