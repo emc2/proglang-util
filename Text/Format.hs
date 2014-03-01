@@ -230,11 +230,11 @@ headlessParenList body =
 
 headlessBracketList :: Format f => [f] -> Doc
 headlessBracketList body =
-  lbrack <> (nest 2 (sep (punctuate comma body))) <> rbrack
+  lbrack <+> (nest 2 (sep (punctuate comma body))) <+> rbrack
 
 headlessBraceList :: Format f => [f] -> Doc
 headlessBraceList body =
-  lbrace <> (nest 2 (sep (punctuate comma body))) <> rbrace
+  lbrace <+> (nest 2 (sep (punctuate comma body))) <+> rbrace
 
 parenList :: (Format f, Format g) => f -> [g] -> Doc
 parenList head body =
@@ -242,11 +242,11 @@ parenList head body =
 
 bracketList :: (Format f, Format g) => f -> [g] -> Doc
 bracketList head body =
-  head <> headlessBracketList body
+  head <+> headlessBracketList body
 
 braceList :: (Format f, Format g) => f -> [g] -> Doc
 braceList head body =
-  head <> headlessBracketList body
+  head <+> headlessBracketList body
 
 -- | A class representing entities that can be formatted
 class Format f where
